@@ -1,5 +1,6 @@
 package com.gestao.gestao.service;
 
+import com.gestao.gestao.exception.AlreadyExistsException;
 import com.gestao.gestao.model.DTO.ProdutoDTO;
 import com.gestao.gestao.model.Produto;
 import com.gestao.gestao.repository.ProdutoRepository;
@@ -14,24 +15,24 @@ import java.util.Collection;
 public class ProdutoService {
     private ProdutoRepository produtoRepository;
 
-    public void cadastrar(Produto produto) throws Exception {
-        if (produtoRepository.existsProdutoByCodigoDeBarras(produto.getCodigoDeBarras())) {
-            throw new Exception("Há um produto com o código " + produto.getCodigoDeBarras() + " já cadastrado!");
+    public Produto cadastrar(Produto produto) throws Exception {
+        if (produtoRepository.existsByCodigoDeBarras(produto.getCodigoDeBarras())) {
+            throw new AlreadyExistsException(produto.getCodigoDeBarras());
         } else if (produto.getNome() == null) {
             throw new Exception("O produto deve conter um nome");
         } else if (produto.getQtdeEstoque() < 0) {
             throw new Exception("O estoque do produto não pode ser negativo!");
         }
-        produtoRepository.save(produto);
+        return produtoRepository.save(produto);
     }
 
-    public void atualizar(ProdutoDTO produtoDTO) throws Exception {
-        if (!produtoRepository.existsProdutoByCodigoDeBarras(produtoDTO.getCodigoDeBarras())) {
+    public Produto atualizar(ProdutoDTO produtoDTO) throws Exception {
+        if (!produtoRepository.existsByCodigoDeBarras(produtoDTO.getCodigoDeBarras())) {
             throw new Exception("Não há nenhum produto com o código " + produtoDTO.getCodigoDeBarras() + " registrado.");
         }
         Produto produto = new Produto();
         BeanUtils.copyProperties(produtoDTO, produto);
-        produtoRepository.save(produto);
+        return produtoRepository.save(produto);
     }
 
     public Produto buscarUm(Integer id) {

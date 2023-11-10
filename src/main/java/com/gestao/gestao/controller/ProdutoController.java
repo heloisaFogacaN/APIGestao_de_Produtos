@@ -1,5 +1,6 @@
 package com.gestao.gestao.controller;
 
+import com.gestao.gestao.exception.AlreadyExistsException;
 import com.gestao.gestao.model.DTO.ProdutoDTO;
 import com.gestao.gestao.model.Produto;
 import com.gestao.gestao.service.ProdutoService;
@@ -19,7 +20,11 @@ public class ProdutoController {
 
     @PostMapping
     public ResponseEntity<Produto> inserir(@RequestBody Produto produto) throws Exception {
-        produtoService.cadastrar(produto);
+        try {
+            return ResponseEntity.ok(produtoService.cadastrar(produto));
+        } catch (AlreadyExistsException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping("/{id}")
@@ -32,8 +37,12 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public Collection<Produto> buscarTodos() {
-        return produtoService.buscarTodos();
+    public ResponseEntity<Collection<Produto>> buscarTodos() {
+        try {
+            return ResponseEntity.ok(produtoService.buscarTodos());
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -43,6 +52,10 @@ public class ProdutoController {
 
     @PutMapping
     public ResponseEntity<Produto> atualizar(@RequestBody ProdutoDTO produto) throws Exception {
-        produtoService.atualizar(produto);
+        try {
+            return ResponseEntity.ok(produtoService.atualizar(produto));
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
