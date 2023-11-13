@@ -1,6 +1,7 @@
 package com.gestao.gestao.controller;
 
 import com.gestao.gestao.exception.AlreadyExistsException;
+import com.gestao.gestao.exception.CadastroErradoException;
 import com.gestao.gestao.model.DTO.ProdutoDTO;
 import com.gestao.gestao.model.Produto;
 import com.gestao.gestao.service.ProdutoService;
@@ -14,23 +15,25 @@ import java.util.NoSuchElementException;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/products")
+@RequestMapping("/produto")
 public class ProdutoController {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<Produto> inserir(@RequestBody Produto produto) throws Exception {
+    public ResponseEntity<Produto> inserir(@RequestBody ProdutoDTO produto) throws Exception {
         try {
             return ResponseEntity.ok(produtoService.cadastrar(produto));
         } catch (AlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (CadastroErradoException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarUm(@PathVariable Integer id) {
+    @GetMapping("/{codigo}")
+    public ResponseEntity<Produto> buscarUm(@PathVariable Long codigo) {
         try {
-            return ResponseEntity.ok(produtoService.buscarUm(id));
+            return ResponseEntity.ok(produtoService.buscarUm(codigo));
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -45,13 +48,13 @@ public class ProdutoController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Integer id) {
-        produtoService.deletar(id);
+    @DeleteMapping("/{codigo}")
+    public void deletar(@PathVariable Long codigo) {
+        produtoService.deletar(codigo);
     }
 
     @PutMapping
-    public ResponseEntity<Produto> atualizar(@RequestBody ProdutoDTO produto) throws Exception {
+    public ResponseEntity<Produto> atualizar(@RequestBody Produto produto) throws Exception {
         try {
             return ResponseEntity.ok(produtoService.atualizar(produto));
         } catch (NoSuchElementException e) {

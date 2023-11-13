@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class ProdutoDTO {
     private String nome;
     private Double preco;
     private String dataValidade;
     private String descricao;
+    private Integer qtdeEstoque;
     private Long codigoDeBarras;
     private Double peso;
     private Double medida;
