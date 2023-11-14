@@ -38,9 +38,11 @@ public class Produto {
     @Column(nullable = false)
     private Double medida;
 
-    @Column(nullable = false)
-    private String fabricante;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Fabricante fabricante;
 
-    @Column(nullable = false)
-    private String categoria;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Categoria categoria;
 }
